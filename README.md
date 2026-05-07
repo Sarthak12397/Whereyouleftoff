@@ -71,7 +71,64 @@ WHERE YOU LEFT OFF
   What's incomplete, what's broken, what's next
   With confidence scoring and evidence citations
 ```
+## Status
+Status
+Early prototype / active development
+WhereYouLeftOff is currently an experimental GitHub repository analysis tool.
+It is not production-ready yet.
+The current prototype can:
 
+
+analyze repository structure
+
+
+inspect execution flow
+
+
+detect likely unfinished work
+
+
+identify broken or missing implementation links
+
+
+generate probable continuation points
+
+
+Many parts of the analysis system are still evolving:
+
+
+repository parsers
+
+
+heuristic scoring
+
+
+dependency tracing
+
+
+intent reconstruction
+
+
+confidence ranking
+
+
+The project is focused on validating a core idea:
+
+Can AI infer repository state and unfinished developer intent directly from a codebase?
+
+The long-term vision is a tool that helps developers return to old repositories and immediately understand:
+
+
+what was being built
+
+
+what broke
+
+
+what remains incomplete
+
+
+and what should happen next.
 ## Built With
 
 - Node.js + TypeScript
