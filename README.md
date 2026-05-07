@@ -83,6 +83,4 @@ WHERE YOU LEFT OFF
 Built as a developer tool for developers who context-switch,  
 return to old projects, or onboard into unknown codebases.
 
----
 
-*Built by Sarthak Shrestha*
