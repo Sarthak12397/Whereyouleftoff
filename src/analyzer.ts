@@ -31,7 +31,7 @@ ${filesSummary}
 
 Global rules for your response:
 - Maximum 5 points per section
-- No repeating the same insight twice  
+- No repeating the same insight twice
 - If unsure about something, say so explicitly
 - Prefer bullet points over paragraphs
 - Be surgical. Not documentary.
@@ -102,6 +102,58 @@ Be surgical. Not documentary.
   return modes[mode] || modes.explain;
 }
 
+async function reviewWhereYouLeftOff(
+  model: any,
+  analysis: string
+): Promise<string> {
+  const prompt = `
+You are a senior engineer reviewing an AI-generated analysis of a codebase.
+
+Here is the analysis:
+${analysis}
+
+Review it for these issues and fix them:
+- [OVERCONFIDENT] Claims stated as fact without code evidence
+- [REPEATED] Same insight mentioned more than once
+- [UNVERIFIED] Assumptions presented as conclusions
+
+Rules:
+- Keep everything that is well-evidenced
+- Soften overconfident claims with "appears to" or "suggests that"
+- Remove repeated insights entirely
+- Flag unverified assumptions with "(unverified — check manually)"
+- Do NOT add new insights. Only clean existing ones.
+- Keep the same structure and format.
+
+Return the cleaned analysis only. No meta-commentary.
+`;
+
+  let result;
+  let attempts = 0;
+
+  while (attempts < 5) {
+    try {
+      result = await model.generateContent(prompt);
+      break;
+    } catch (err: any) {
+      if (
+        err.message?.includes("429") ||
+        err.message?.includes("503")
+      ) {
+        const wait = Math.pow(2, attempts) * 10000;
+        console.log(` Reviewer waiting ${wait / 1000}s...`);
+        await new Promise((r) => setTimeout(r, wait));
+        attempts++;
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  if (!result) return analysis;
+  return result.response.text();
+}
+
 export async function analyzeRepo(
   repo: RepoData,
   apiKey: string
@@ -146,7 +198,14 @@ export async function analyzeRepo(
 
     if (!result) throw new Error(`Failed after 5 attempts on mode: ${mode}`);
 
-    const text = result.response.text();
+    let text = result.response.text();
+
+    if (mode === "whereyouleftoff") {
+      console.log(" Reviewing whereyouleftoff...");
+      await new Promise((r) => setTimeout(r, 6000));
+      text = await reviewWhereYouLeftOff(model, text);
+    }
+
     (results as any)[label] = text;
   }
 
