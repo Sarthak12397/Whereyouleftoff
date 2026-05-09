@@ -189,6 +189,4 @@ or onboard into unknown codebases.
 The goal is not to replace reading the code.
 The goal is to get you back to productive in under a minute.
 
----
 
-*Built by Sarthak Shrestha*
